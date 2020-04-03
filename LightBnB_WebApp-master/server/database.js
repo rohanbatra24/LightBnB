@@ -143,7 +143,7 @@ const getAllProperties = function(options, limit = 10) {
   `;
 
   // 5
-  console.log(queryString, queryParams);
+  // console.log(queryString, queryParams);
 
   // 6
   return pool.query(queryString, queryParams).then((res) => res.rows);
@@ -156,9 +156,41 @@ exports.getAllProperties = getAllProperties;
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = function(property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
+  console.log(property);
+  return pool
+    .query(
+      `
+    INSERT into PROPERTIES (
+      title,
+      description,
+      thumbnail_photo_url,
+      cover_photo_url,
+      cost_per_night,
+      street,
+      city,
+      province,
+      post_code,
+      country,
+      parking_spaces,
+      number_of_bathrooms,
+      number_of_bedrooms)
+    VALUES ('${property.title}',
+      '${property.description}',
+        '${property.thumbnail_photo_url}',
+          '${property.cover_photo_url}',
+            '${property.cost_per_night}',
+              '${property.street}',
+                '${property.city}',
+                  '${property.province}',
+                    '${property.post_code}',
+                      '${property.country}',
+                        '${property.parking_spaces}',
+                          '${property.number_of_bathrooms}',
+                            '${property.number_of_bedrooms}')
+    returning *;
+    `
+    )
+    .then((res) => res)
+    .catch((err) => console.log(err));
 };
 exports.addProperty = addProperty;
